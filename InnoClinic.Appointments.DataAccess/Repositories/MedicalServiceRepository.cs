@@ -1,0 +1,38 @@
+﻿using InnoClinic.Appointments.Core.Exceptions;
+using InnoClinic.Appointments.Core.Models;
+using InnoClinic.Appointments.DataAccess.Context;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+
+namespace InnoClinic.Appointments.DataAccess.Repositories
+{
+    public class MedicalServiceRepository : RepositoryBase<MedicalServiceModel>, IMedicalServiceRepository
+    {
+        public MedicalServiceRepository(InnoClinicAppointmentsDbContext context) : base(context) { }
+
+        public async Task<MedicalServiceModel> GetByIdAsync(Guid id)
+        {
+            return await _context.MedicalServices
+            .FirstOrDefaultAsync(m => m.Id.Equals(id))
+            ?? throw new DataRepositoryException($"Service with Id '{id}' not found.", StatusCodes.Status404NotFound); ;
+        }
+
+        public override async Task UpdateAsync(MedicalServiceModel entity)
+        {
+            await _context.MedicalServices
+                .Where(m => m.Id.Equals(entity.Id))
+                .ExecuteUpdateAsync(m => m
+                    .SetProperty(m => m.ServiceName, entity.ServiceName)
+                    .SetProperty(m => m.Price, entity.Price)
+                    .SetProperty(m => m.IsActive, entity.IsActive)
+                );
+        }
+
+        public override async Task DeleteAsync(MedicalServiceModel entity)
+        {
+            await _context.Patients
+                .Where(d => d.Id.Equals(entity.Id))
+                .ExecuteDeleteAsync();
+        }
+    }
+}
