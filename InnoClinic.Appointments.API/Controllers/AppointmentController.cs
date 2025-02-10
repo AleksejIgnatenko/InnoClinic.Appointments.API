@@ -41,6 +41,15 @@ namespace InnoClinic.Appointments.API.Controllers
             return Ok(await _appointmentService.GetAppointmentsByDoctorAsync(token));
         }
 
+        [Authorize]
+        [HttpGet("appointments-by-doctor-and-date")]
+        public async Task<ActionResult> GetAppointmentsByDoctorAndDateAsync(string date)
+        {
+            var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+
+            return Ok(await _appointmentService.GetAppointmentsByDoctorAndDateAsync(token, date));
+        }
+
         [HttpPut("{id:guid}")]
         public async Task<ActionResult> UpdateAppointmentAsync(Guid id, [FromBody] AppointmentRequest appointmentRequest)
         {

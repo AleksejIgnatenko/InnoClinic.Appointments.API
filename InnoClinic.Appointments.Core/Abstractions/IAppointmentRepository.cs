@@ -7,5 +7,6 @@ namespace InnoClinic.Appointments.DataAccess.Repositories
         Task<IEnumerable<AppointmentModel>> GetAllAsync();
         Task<AppointmentModel> GetByIdAsync(Guid id);
         Task<IEnumerable<AppointmentModel>> GetByAccountIdAsync(Guid accountId);
+        Task<IEnumerable<AppointmentModel>> GetByAccountIdAndDateAsync(Guid accountId, string date);
     }
 }

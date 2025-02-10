@@ -1,5 +1,4 @@
-﻿using InnoClinic.Appointments.Core.Dto;
-using InnoClinic.Appointments.Core.Exceptions;
+﻿using InnoClinic.Appointments.Core.Exceptions;
 using InnoClinic.Appointments.Core.Models;
 using InnoClinic.Appointments.DataAccess.Repositories;
 
@@ -62,6 +61,13 @@ namespace InnoClinic.Appointments.Application.Services
         {
             var accountId = _jwtTokenService.GetAccountIdFromAccessToken(token);
             return await _appointmentRepository.GetByAccountIdAsync(accountId);
+
+        }
+
+        public async Task<IEnumerable<AppointmentModel>> GetAppointmentsByDoctorAndDateAsync(string token, string date)
+        {
+            var accountId = _jwtTokenService.GetAccountIdFromAccessToken(token);
+            return await _appointmentRepository.GetByAccountIdAndDateAsync(accountId, date);
 
         }
 
