@@ -61,23 +61,30 @@ namespace InnoClinic.Appointments.Application.Services
         {
             var accountId = _jwtTokenService.GetAccountIdFromAccessToken(token);
             return await _appointmentRepository.GetByAccountIdAsync(accountId);
+        }
+        public async Task<IEnumerable<AppointmentModel>> GetAppointmentsByDateAsync(string date)
+        {
+            var appointments = await _appointmentRepository.GetByDateAsync(date);
 
+            appointments = appointments.OrderBy(a => DateTime.Parse(a.Time))
+                                      .ThenBy(a => a.Doctor.FirstName)
+                                      .ThenBy(a => a.Doctor.LastName)
+                                      .ThenBy(a => a.MedicalService);
+
+            return appointments;
         }
 
         public async Task<IEnumerable<AppointmentModel>> GetAppointmentsByDoctorAndDateAsync(string token, string date)
         {
             var accountId = _jwtTokenService.GetAccountIdFromAccessToken(token);
             return await _appointmentRepository.GetByAccountIdAndDateAsync(accountId, date);
-
         }
 
-        public async Task UpdateAppointmentAsync(Guid id, string token, Guid doctorId, Guid medicalServiceId, string date, string time, bool isApproved)
+        public async Task UpdateAppointmentAsync(Guid id, Guid doctorId, Guid medicalServiceId, Guid patientId, string date, string time, bool isApproved)
         {
-            var accountId = _jwtTokenService.GetAccountIdFromAccessToken(token);
-
-            var patient = await _patientRepository.GetByAccountIdAsync(accountId);
             var doctor = await _doctorRepository.GetByIdAsync(doctorId);
             var medicalService = await _medicalServiceRepository.GetByIdAsync(medicalServiceId);
+            var patient = await _patientRepository.GetByIdAsync(patientId);
 
             var appointment = new AppointmentModel
             {

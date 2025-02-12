@@ -42,6 +42,13 @@ namespace InnoClinic.Appointments.API.Controllers
         }
 
         [Authorize]
+        [HttpGet("appointments-by-date")]
+        public async Task<ActionResult> GetAppointmentsByDateAsync(string date)
+        {
+            return Ok(await _appointmentService.GetAppointmentsByDateAsync(date));
+        }
+
+        [Authorize]
         [HttpGet("appointments-by-doctor-and-date")]
         public async Task<ActionResult> GetAppointmentsByDoctorAndDateAsync(string date)
         {
@@ -50,12 +57,13 @@ namespace InnoClinic.Appointments.API.Controllers
             return Ok(await _appointmentService.GetAppointmentsByDoctorAndDateAsync(token, date));
         }
 
+        //role receptionist
+        [Authorize]
         [HttpPut("{id:guid}")]
         public async Task<ActionResult> UpdateAppointmentAsync(Guid id, [FromBody] AppointmentRequest appointmentRequest)
         {
-            var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-            await _appointmentService.UpdateAppointmentAsync(id, token, appointmentRequest.DoctorId,
-                appointmentRequest.MedicalServiceId, appointmentRequest.Date, appointmentRequest.Time, appointmentRequest.IsApproved);
+            await _appointmentService.UpdateAppointmentAsync(id, appointmentRequest.DoctorId,
+                appointmentRequest.MedicalServiceId, appointmentRequest.PatientId, appointmentRequest.Date, appointmentRequest.Time, appointmentRequest.IsApproved);
 
             return Ok();
         }
