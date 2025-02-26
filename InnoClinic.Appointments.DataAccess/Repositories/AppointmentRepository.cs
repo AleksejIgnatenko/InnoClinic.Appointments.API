@@ -35,5 +35,25 @@ namespace InnoClinic.Appointments.DataAccess.Repositories
                 .Where(a => a.Doctor.AccountId.Equals(accountId))
                 .ToListAsync();
         }
+        public async Task<IEnumerable<AppointmentModel>> GetByDateAsync(string date)
+        {
+            return await _context.Appointments
+                .Include(a => a.Doctor)
+                .Include(a => a.Patient)
+                .Include(a => a.MedicalService)
+                .Where(a => a.Date.Equals(date))
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<AppointmentModel>> GetByAccountIdAndDateAsync(Guid accountId, string date)
+        {
+            return await _context.Appointments
+                .Include(a => a.Doctor)
+                .Include(a => a.Patient)
+                .Include(a => a.MedicalService)
+                .Where(a => (a.Doctor.AccountId.Equals(accountId)) && (a.Date.Equals(date)))
+                .ToListAsync();
+        }
+
     }
 }
