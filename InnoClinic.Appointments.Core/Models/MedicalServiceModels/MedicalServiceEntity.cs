@@ -1,6 +1,6 @@
-﻿namespace InnoClinic.Appointments.Core.Dto
+﻿namespace InnoClinic.Appointments.Core.Models.MedicalServiceModels
 {
-    public class MedicalServiceDto
+    public class MedicalServiceEntity
     {
         public Guid Id { get; set; }
         public string ServiceName { get; set; } = string.Empty;

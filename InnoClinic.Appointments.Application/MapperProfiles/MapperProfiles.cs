@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
-using InnoClinic.Appointments.Core.Dto;
-using InnoClinic.Appointments.Core.Models;
+using InnoClinic.Appointments.Core.Models.DoctorModels;
+using InnoClinic.Appointments.Core.Models.MedicalServiceModels;
+using InnoClinic.Appointments.Core.Models.PatientModels;
 
 namespace InnoClinic.Appointments.Application.MapperProfiles
 {
@@ -8,12 +9,12 @@ namespace InnoClinic.Appointments.Application.MapperProfiles
     {
         public MapperProfiles()
         {
-            CreateMap<DoctorDto, DoctorModel>();
-            CreateMap<DoctorModel, DoctorDto>();
+            CreateMap<DoctorDto, DoctorEntity>();
+            CreateMap<DoctorEntity, DoctorDto>();
 
-            CreateMap<MedicalServiceDto, MedicalServiceModel>();
+            CreateMap<MedicalServiceDto, MedicalServiceEntity>();
 
-            CreateMap<PatientDto, PatientModel>();
+            CreateMap<PatientDto, PatientEntity>();
         }
     }
 }

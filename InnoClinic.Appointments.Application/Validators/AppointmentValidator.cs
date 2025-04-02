@@ -1,9 +1,9 @@
 ﻿using FluentValidation;
-using InnoClinic.Appointments.Core.Models;
+using InnoClinic.Appointments.Core.Models.AppointmentModels;
 
 namespace InnoClinic.Appointments.Application.Validators
 {
-    internal class AppointmentValidator : AbstractValidator<AppointmentModel>
+    internal class AppointmentValidator : AbstractValidator<AppointmentEntity>
     {
         public AppointmentValidator()
         {

@@ -1,7 +1,8 @@
 ﻿using System.Text;
 using AutoMapper;
-using InnoClinic.Appointments.Core.Dto;
-using InnoClinic.Appointments.Core.Models;
+using InnoClinic.Appointments.Core.Models.DoctorModels;
+using InnoClinic.Appointments.Core.Models.MedicalServiceModels;
+using InnoClinic.Appointments.Core.Models.PatientModels;
 using InnoClinic.Appointments.DataAccess.Repositories;
 using InnoClinic.Appointments.Infrastructure.RabbitMQ;
 using Microsoft.Extensions.Hosting;
@@ -50,13 +51,13 @@ namespace InnoClinic.Appointments.Application.RabbitMQ
                 var content = Encoding.UTF8.GetString(ea.Body.ToArray());
 
                 var doctorDto = JsonConvert.DeserializeObject<DoctorDto>(content);
-                var doctor = _mapper.Map<DoctorModel>(doctorDto);
+                var doctor = _mapper.Map<DoctorEntity>(doctorDto);
 
                 await _doctorRepository.CreateAsync(doctor);
 
                 _channel.BasicAck(ea.DeliveryTag, false);
             };
-            _channel.BasicConsume(RabbitMQQueues.ADD_DOCTOR_QUEUE, false, addDoctorConsumer);
+            _channel.BasicConsume(RabbitMQQueues.ADD_DOCTOR_IN_APPOINTMENTS_QUEUE, false, addDoctorConsumer);
 
             var updateDoctorConsumer = new EventingBasicConsumer(_channel);
             updateDoctorConsumer.Received += async (ch, ea) =>
@@ -65,13 +66,13 @@ namespace InnoClinic.Appointments.Application.RabbitMQ
 
                 var doctorDto = JsonConvert.DeserializeObject<DoctorDto>(content);
 
-                var doctor = _mapper.Map<DoctorModel>(doctorDto);
+                var doctor = _mapper.Map<DoctorEntity>(doctorDto);
 
                 await _doctorRepository.UpdateAsync(doctor);
 
                 _channel.BasicAck(ea.DeliveryTag, false);
             };
-            _channel.BasicConsume(RabbitMQQueues.UPDATE_DOCTOR_QUEUE, false, updateDoctorConsumer);
+            _channel.BasicConsume(RabbitMQQueues.UPDATE_DOCTOR_IN_APPOINTMENTS_QUEUE, false, updateDoctorConsumer);
 
             var deleteDoctorConsumer = new EventingBasicConsumer(_channel);
             deleteDoctorConsumer.Received += async (ch, ea) =>
@@ -79,13 +80,13 @@ namespace InnoClinic.Appointments.Application.RabbitMQ
                 var content = Encoding.UTF8.GetString(ea.Body.ToArray());
 
                 var doctorDto = JsonConvert.DeserializeObject<DoctorDto>(content);
-                var doctor = _mapper.Map<DoctorModel>(doctorDto);
+                var doctor = _mapper.Map<DoctorEntity>(doctorDto);
 
                 await _doctorRepository.DeleteAsync(doctor);
 
                 _channel.BasicAck(ea.DeliveryTag, false);
             };
-            _channel.BasicConsume(RabbitMQQueues.DELETE_DOCTOR_QUEUE, false, deleteDoctorConsumer);
+            _channel.BasicConsume(RabbitMQQueues.DELETE_DOCTOR_IN_APPOINTMENTS_QUEUE, false, deleteDoctorConsumer);
             #endregion
 
             #region medicalService
@@ -95,7 +96,7 @@ namespace InnoClinic.Appointments.Application.RabbitMQ
                 var content = Encoding.UTF8.GetString(ea.Body.ToArray());
 
                 var medicalServiceDto = JsonConvert.DeserializeObject<MedicalServiceDto>(content);
-                var medicalService = _mapper.Map<MedicalServiceModel>(medicalServiceDto);
+                var medicalService = _mapper.Map<MedicalServiceEntity>(medicalServiceDto);
 
                 await _mediicalServiceRepository.CreateAsync(medicalService);
 
@@ -109,7 +110,7 @@ namespace InnoClinic.Appointments.Application.RabbitMQ
                 var content = Encoding.UTF8.GetString(ea.Body.ToArray());
 
                 var medicalServiceDto = JsonConvert.DeserializeObject<MedicalServiceDto>(content);
-                var medicalService = _mapper.Map<MedicalServiceModel>(medicalServiceDto);
+                var medicalService = _mapper.Map<MedicalServiceEntity>(medicalServiceDto);
 
                 await _mediicalServiceRepository.UpdateAsync(medicalService);
 
@@ -123,7 +124,7 @@ namespace InnoClinic.Appointments.Application.RabbitMQ
                 var content = Encoding.UTF8.GetString(ea.Body.ToArray());
 
                 var medicalServiceDto = JsonConvert.DeserializeObject<MedicalServiceDto>(content);
-                var medicalService = _mapper.Map<MedicalServiceModel>(medicalServiceDto);
+                var medicalService = _mapper.Map<MedicalServiceEntity>(medicalServiceDto);
 
                 await _mediicalServiceRepository.DeleteAsync(medicalService);
 
@@ -139,13 +140,13 @@ namespace InnoClinic.Appointments.Application.RabbitMQ
                 var content = Encoding.UTF8.GetString(ea.Body.ToArray());
 
                 var patientDto = JsonConvert.DeserializeObject<PatientDto>(content);
-                var patient = _mapper.Map<PatientModel>(patientDto);
+                var patient = _mapper.Map<PatientEntity>(patientDto);
 
                 await _patientRepository.CreateAsync(patient);
 
                 _channel.BasicAck(ea.DeliveryTag, false);
             };
-            _channel.BasicConsume(RabbitMQQueues.ADD_PATIENT_QUEUE, false, addPatientConsumer);
+            _channel.BasicConsume(RabbitMQQueues.ADD_PATIENT_IN_APPOINTMENTS_QUEUE, false, addPatientConsumer);
 
             var updatePatientConsumer = new EventingBasicConsumer(_channel);
             updatePatientConsumer.Received += async (ch, ea) =>
@@ -153,13 +154,13 @@ namespace InnoClinic.Appointments.Application.RabbitMQ
                 var content = Encoding.UTF8.GetString(ea.Body.ToArray());
 
                 var patientDto = JsonConvert.DeserializeObject<PatientDto>(content);
-                var patient = _mapper.Map<PatientModel>(patientDto);
+                var patient = _mapper.Map<PatientEntity>(patientDto);
 
                 await _patientRepository.UpdateAsync(patient);
 
                 _channel.BasicAck(ea.DeliveryTag, false);
             };
-            _channel.BasicConsume(RabbitMQQueues.UPDATE_PATIENT_QUEUE, false, updatePatientConsumer);
+            _channel.BasicConsume(RabbitMQQueues.UPDATE_PATIEN_IN_APPOINTMENTST_QUEUE, false, updatePatientConsumer);
 
             var deletePatientConsumer = new EventingBasicConsumer(_channel);
             deletePatientConsumer.Received += async (ch, ea) =>
@@ -167,13 +168,13 @@ namespace InnoClinic.Appointments.Application.RabbitMQ
                 var content = Encoding.UTF8.GetString(ea.Body.ToArray());
 
                 var patientDto = JsonConvert.DeserializeObject<PatientDto>(content);
-                var patient = _mapper.Map<PatientModel>(patientDto);
+                var patient = _mapper.Map<PatientEntity>(patientDto);
 
                 await _patientRepository.DeleteAsync(patient);
 
                 _channel.BasicAck(ea.DeliveryTag, false);
             };
-            _channel.BasicConsume(RabbitMQQueues.DELETE_PATIENT_QUEUE, false, deletePatientConsumer);
+            _channel.BasicConsume(RabbitMQQueues.DELETE_PATIENT_IN_APPOINTMENTS_QUEUE, false, deletePatientConsumer);
             #endregion
 
 

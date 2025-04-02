@@ -1,14 +1,19 @@
-﻿using InnoClinic.Appointments.Core.Models;
+﻿using InnoClinic.Appointments.Core.Models.AppointmentModels;
+using InnoClinic.Appointments.Core.Models.AppointmentResultModels;
+using InnoClinic.Appointments.Core.Models.DoctorModels;
+using InnoClinic.Appointments.Core.Models.MedicalServiceModels;
+using InnoClinic.Appointments.Core.Models.PatientModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace InnoClinic.Appointments.DataAccess.Context
 {
     public class InnoClinicAppointmentsDbContext : DbContext
     {
-        public DbSet<AppointmentModel> Appointments { get; set; }
-        public DbSet<DoctorModel> Doctors { get; set; }
-        public DbSet<MedicalServiceModel> MedicalServices { get; set; }
-        public DbSet<PatientModel> Patients { get; set; }
+        public DbSet<AppointmentEntity> Appointments { get; set; }
+        public DbSet<AppointmentResultEntity> AppointmentResults { get; set; }
+        public DbSet<DoctorEntity> Doctors { get; set; }
+        public DbSet<MedicalServiceEntity> MedicalServices { get; set; }
+        public DbSet<PatientEntity> Patients { get; set; }
 
         public InnoClinicAppointmentsDbContext(DbContextOptions<InnoClinicAppointmentsDbContext> options) : base(options)
         {

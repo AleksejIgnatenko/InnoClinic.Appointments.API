@@ -1,9 +1,9 @@
-﻿using InnoClinic.Appointments.Core.Models;
+﻿using InnoClinic.Appointments.Core.Models.MedicalServiceModels;
 
 namespace InnoClinic.Appointments.DataAccess.Repositories
 {
-    public interface IMedicalServiceRepository : IRepositoryBase<MedicalServiceModel>
+    public interface IMedicalServiceRepository : IRepositoryBase<MedicalServiceEntity>
     {
-        Task<MedicalServiceModel> GetByIdAsync(Guid id);
+        Task<MedicalServiceEntity> GetByIdAsync(Guid id);
     }
 }

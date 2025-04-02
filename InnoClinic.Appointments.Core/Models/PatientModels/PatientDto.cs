@@ -1,4 +1,4 @@
-﻿namespace InnoClinic.Appointments.Core.Dto
+﻿namespace InnoClinic.Appointments.Core.Models.PatientModels
 {
     public class PatientDto
     {

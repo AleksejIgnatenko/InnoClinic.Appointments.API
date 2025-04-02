@@ -1,11 +1,12 @@
-﻿using InnoClinic.Appointments.API.Contracts;
-using InnoClinic.Appointments.Application.Services;
+﻿using InnoClinic.Appointments.Application.Services;
+using InnoClinic.Appointments.Core.Models.AppointmentModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InnoClinic.Appointments.API.Controllers
 {
     [ApiController]
+    //[Authorize]
     [Route("api/[controller]")]
     public class AppointmentController : ControllerBase
     {
@@ -16,7 +17,7 @@ namespace InnoClinic.Appointments.API.Controllers
             _appointmentService = appointmentService;
         }
 
-        [Authorize]
+
         [HttpPost]
         public async Task<ActionResult> CreateAppointmentAsync([FromBody] AppointmentRequest appointmentRequest)
         {
@@ -33,7 +34,6 @@ namespace InnoClinic.Appointments.API.Controllers
             return Ok(await _appointmentService.GetAllAppointmentsAsync());
         }
 
-        [Authorize]
         [HttpGet("appointments-by-doctor")]
         public async Task<ActionResult> GetAppointmentsByDoctorAsync()
         {
@@ -41,14 +41,12 @@ namespace InnoClinic.Appointments.API.Controllers
             return Ok(await _appointmentService.GetAppointmentsByDoctorAsync(token));
         }
 
-        [Authorize]
         [HttpGet("appointments-by-date")]
         public async Task<ActionResult> GetAppointmentsByDateAsync(string date)
         {
             return Ok(await _appointmentService.GetAppointmentsByDateAsync(date));
         }
 
-        [Authorize]
         [HttpGet("appointments-by-doctor-and-date")]
         public async Task<ActionResult> GetAppointmentsByDoctorAndDateAsync(string date)
         {
@@ -57,13 +55,24 @@ namespace InnoClinic.Appointments.API.Controllers
             return Ok(await _appointmentService.GetAppointmentsByDoctorAndDateAsync(token, date));
         }
 
+        [HttpGet("all-available-time-slots")]
+        public async Task<ActionResult> GetAllAvailableTimeSlotsAsync(string date, int timeSlotSize)
+        {
+            return Ok(await _appointmentService.GetAllAvailableTimeSlotsAsync(date, timeSlotSize));
+        }
+
+        [HttpGet("by-patient-id/{patientId:guid}")]
+        public async Task<ActionResult> GetAllAppointmentsByPatientIdAsync(Guid patientId)
+        {
+            return Ok(await _appointmentService.GetAllAppointmentsByPatientIdAsync(patientId));
+        }
+
         //role receptionist
-        [Authorize]
         [HttpPut("{id:guid}")]
         public async Task<ActionResult> UpdateAppointmentAsync(Guid id, [FromBody] AppointmentRequest appointmentRequest)
         {
             await _appointmentService.UpdateAppointmentAsync(id, appointmentRequest.DoctorId,
-                appointmentRequest.MedicalServiceId, appointmentRequest.PatientId, appointmentRequest.Date, appointmentRequest.Time, appointmentRequest.IsApproved);
+                appointmentRequest.MedicalServiceId, appointmentRequest.Date, appointmentRequest.Time, appointmentRequest.IsApproved);
 
             return Ok();
         }

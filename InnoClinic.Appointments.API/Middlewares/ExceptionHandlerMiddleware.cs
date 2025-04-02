@@ -39,7 +39,6 @@ namespace InnoClinic.Appointments.API.Middlewares
                 var result = JsonSerializer.Serialize(new { error = ex.Message });
                 await context.Response.WriteAsync(result);
             }
-
             catch (Exception ex)
             {
                 Log.Error(ex.Message);

@@ -1,29 +1,29 @@
 ﻿using InnoClinic.Appointments.Core.Exceptions;
-using InnoClinic.Appointments.Core.Models;
+using InnoClinic.Appointments.Core.Models.PatientModels;
 using InnoClinic.Appointments.DataAccess.Context;
 using Microsoft.EntityFrameworkCore;
 
 namespace InnoClinic.Appointments.DataAccess.Repositories
 {
-    public class PatientRepository : RepositoryBase<PatientModel>, IPatientRepository
+    public class PatientRepository : RepositoryBase<PatientEntity>, IPatientRepository
     {
         public PatientRepository(InnoClinicAppointmentsDbContext context) : base(context) { }
 
-        public async Task<PatientModel> GetByIdAsync(Guid id)
+        public async Task<PatientEntity> GetByIdAsync(Guid id)
         {
             return await _context.Patients
                 .FirstOrDefaultAsync(p => p.Id == id)
                 ?? throw new DataRepositoryException("Patient not found", 404);
         }
 
-        public async Task<PatientModel> GetByAccountIdAsync(Guid accountId)
+        public async Task<PatientEntity> GetByAccountIdAsync(Guid accountId)
         {
             return await _context.Patients
                 .FirstOrDefaultAsync(p => p.AccountId == accountId)
                 ?? throw new DataRepositoryException("Patient not found", 404);
         }
 
-        public override async Task UpdateAsync(PatientModel entity)
+        public override async Task UpdateAsync(PatientEntity entity)
         {
             await _context.Patients
                 .Where(p => p.Id.Equals(entity.Id))
@@ -34,7 +34,7 @@ namespace InnoClinic.Appointments.DataAccess.Repositories
                 );
         }
 
-        public override async Task DeleteAsync(PatientModel entity)
+        public override async Task DeleteAsync(PatientEntity entity)
         {
             await _context.Patients
                 .Where(p => p.Id.Equals(entity.Id))
