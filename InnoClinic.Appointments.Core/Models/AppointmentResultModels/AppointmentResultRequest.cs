@@ -3,8 +3,8 @@
     public record AppointmentResultRequest(
         string Complaints,
         string Conclusion,
-        string Recomendations,
-        string Diagnisis,
+        string Recommendations,
+        string Diagnosis,
         Guid AppointmentId
         );
 }

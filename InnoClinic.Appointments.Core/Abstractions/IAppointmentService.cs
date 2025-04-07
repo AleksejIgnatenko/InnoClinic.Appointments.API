@@ -13,5 +13,6 @@ namespace InnoClinic.Appointments.Application.Services
         Task<IEnumerable<AppointmentEntity>> GetAppointmentsByDoctorAndDateAsync(string token, string date);
         Task<List<string>> GetAllAvailableTimeSlotsAsync(string date, int timeSlotSize);
         Task<IEnumerable<AppointmentEntity>> GetAllAppointmentsByPatientIdAsync(Guid patientId);
+        Task<bool> IsAppointmentResultsExistenceAsync(Guid id);
     }
 }

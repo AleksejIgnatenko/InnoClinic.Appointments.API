@@ -50,5 +50,11 @@ namespace InnoClinic.Appointments.DataAccess.Repositories
                 .FirstOrDefaultAsync(a => a.Id.Equals(id))
                 ?? throw new DataRepositoryException($"Appointment Results with Id '{id}' not found.", StatusCodes.Status404NotFound);
         }
+
+        public async Task<bool> IsAppointmentResultsExistenceAsync(Guid appointmentId)
+        {
+            return await _context.AppointmentResults
+                .AnyAsync(a => a.Appointment.Id.Equals(appointmentId));
+        }
     }
 }

@@ -69,6 +69,5 @@ namespace InnoClinic.Appointments.DataAccess.Repositories
                 .Where(a => (a.Doctor.AccountId.Equals(accountId)) && (a.Date.Equals(date)))
                 .ToListAsync();
         }
-
     }
 }

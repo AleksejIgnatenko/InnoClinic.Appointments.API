@@ -7,5 +7,6 @@ namespace InnoClinic.Appointments.DataAccess.Repositories
         Task<IEnumerable<AppointmentResultEntity>> GetAllAsync();
         Task<AppointmentResultEntity> GetByIdAsync(Guid id);
         Task<IEnumerable<AppointmentResultEntity>> GetAllByAppointmentIdAsync(Guid appointmentId);
+        Task<bool> IsAppointmentResultsExistenceAsync(Guid appointmentId);
     }
 }

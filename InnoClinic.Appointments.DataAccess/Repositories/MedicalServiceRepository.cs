@@ -13,8 +13,8 @@ namespace InnoClinic.Appointments.DataAccess.Repositories
         public async Task<MedicalServiceEntity> GetByIdAsync(Guid id)
         {
             return await _context.MedicalServices
-            .FirstOrDefaultAsync(m => m.Id.Equals(id))
-            ?? throw new DataRepositoryException($"Service with Id '{id}' not found.", StatusCodes.Status404NotFound); ;
+                .FirstOrDefaultAsync(m => m.Id.Equals(id))
+                ?? throw new DataRepositoryException($"Service with Id '{id}' not found.", StatusCodes.Status404NotFound); ;
         }
 
         public override async Task UpdateAsync(MedicalServiceEntity entity)

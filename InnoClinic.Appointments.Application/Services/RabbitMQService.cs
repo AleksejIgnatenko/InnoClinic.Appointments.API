@@ -25,20 +25,18 @@ namespace InnoClinic.Appointments.Application.Services
 
         public async Task CreateQueuesAsync()
         {
-            using (var connection = _factory.CreateConnection())
-            using (var channel = connection.CreateModel())
+            using var connection = _factory.CreateConnection();
+            using var channel = connection.CreateModel();
+            await Task.Run(() =>
             {
-                await Task.Run(() =>
-                {
-                    channel.QueueDeclare(RabbitMQQueues.ADD_DOCTOR_IN_APPOINTMENTS_QUEUE, durable: false, exclusive: false, autoDelete: false, arguments: null);
-                    channel.QueueDeclare(RabbitMQQueues.UPDATE_DOCTOR_IN_APPOINTMENTS_QUEUE, durable: false, exclusive: false, autoDelete: false, arguments: null);
-                    channel.QueueDeclare(RabbitMQQueues.DELETE_DOCTOR_IN_APPOINTMENTS_QUEUE, durable: false, exclusive: false, autoDelete: false, arguments: null);
+                channel.QueueDeclare(RabbitMQQueues.ADD_DOCTOR_QUEUE, durable: false, exclusive: false, autoDelete: false, arguments: null);
+                channel.QueueDeclare(RabbitMQQueues.UPDATE_DOCTOR_QUEUE, durable: false, exclusive: false, autoDelete: false, arguments: null);
+                channel.QueueDeclare(RabbitMQQueues.DELETE_DOCTOR_QUEUE, durable: false, exclusive: false, autoDelete: false, arguments: null);
 
-                    channel.QueueDeclare(RabbitMQQueues.ADD_PATIENT_IN_APPOINTMENTS_QUEUE, durable: false, exclusive: false, autoDelete: false, arguments: null);
-                    channel.QueueDeclare(RabbitMQQueues.UPDATE_PATIEN_IN_APPOINTMENTST_QUEUE, durable: false, exclusive: false, autoDelete: false, arguments: null);
-                    channel.QueueDeclare(RabbitMQQueues.DELETE_PATIENT_IN_APPOINTMENTS_QUEUE, durable: false, exclusive: false, autoDelete: false, arguments: null);
-                });
-            }
+                channel.QueueDeclare(RabbitMQQueues.ADD_PATIENT_QUEUE, durable: false, exclusive: false, autoDelete: false, arguments: null);
+                channel.QueueDeclare(RabbitMQQueues.UPDATE_PATIEN_QUEUE, durable: false, exclusive: false, autoDelete: false, arguments: null);
+                channel.QueueDeclare(RabbitMQQueues.DELETE_PATIENT_QUEUE, durable: false, exclusive: false, autoDelete: false, arguments: null);
+            });
         }
 
         public async Task PublishMessageAsync(object obj, string queueName)

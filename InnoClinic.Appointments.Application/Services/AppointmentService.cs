@@ -12,8 +12,9 @@ namespace InnoClinic.Appointments.Application.Services
         private readonly IMedicalServiceRepository _medicalServiceRepository;
         private readonly IValidationService _validationService;
         private readonly IJwtTokenService _jwtTokenService;
+        private readonly IAppointmentResultRepository _appointmentResultRepository;
 
-        public AppointmentService(IAppointmentRepository appointmentRepository, IPatientRepository patientRepository, IDoctorRepository doctorRepository, IMedicalServiceRepository medicalServiceRepository, IValidationService validationService, IJwtTokenService jwtTokenService)
+        public AppointmentService(IAppointmentRepository appointmentRepository, IPatientRepository patientRepository, IDoctorRepository doctorRepository, IMedicalServiceRepository medicalServiceRepository, IValidationService validationService, IJwtTokenService jwtTokenService, IAppointmentResultRepository appointmentResultRepository)
         {
             _appointmentRepository = appointmentRepository;
             _patientRepository = patientRepository;
@@ -21,6 +22,7 @@ namespace InnoClinic.Appointments.Application.Services
             _medicalServiceRepository = medicalServiceRepository;
             _validationService = validationService;
             _jwtTokenService = jwtTokenService;
+            _appointmentResultRepository = appointmentResultRepository;
         }
 
         public async Task CreateAppointmentAsync(string token, Guid doctorId, Guid medicalServiceId, string date, string time, bool isApproved)
@@ -126,6 +128,11 @@ namespace InnoClinic.Appointments.Application.Services
         public async Task<IEnumerable<AppointmentEntity>> GetAllAppointmentsByPatientIdAsync(Guid patientId)
         {
             return await _appointmentRepository.GetAllByPatientIdAsync(patientId);
+        }
+
+        public async Task<bool> IsAppointmentResultsExistenceAsync(Guid id)
+        {
+            return await _appointmentResultRepository.IsAppointmentResultsExistenceAsync(id);
         }
 
         public async Task UpdateAppointmentAsync(Guid id, Guid doctorId, Guid medicalServiceId, string date, string time, bool isApproved)

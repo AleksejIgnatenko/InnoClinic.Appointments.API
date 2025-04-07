@@ -9,15 +9,17 @@ namespace InnoClinic.Appointments.Application.Services
         private readonly IAppointmentResultRepository _appointmentResultRepository;
         private readonly IAppointmentRepository _appointmentRepository;
         private readonly IValidationService _validationService;
+        private readonly HttpClient _httpClient;
 
         public AppointmentResultService(IAppointmentResultRepository appointmentResultRepository, IAppointmentRepository appointmentRepository, IValidationService validationService)
         {
             _appointmentResultRepository = appointmentResultRepository;
             _appointmentRepository = appointmentRepository;
             _validationService = validationService;
+            _httpClient = new HttpClient();
         }
 
-        public async Task CreateAppointmentResultAsync(string complaints, string conclusion, string recomendations, string diagnisis, Guid appointmentId)
+        public async Task CreateAppointmentResultAsync(string complaints, string conclusion, string recommendations, string diagnosis, Guid appointmentId)
         {
             var appointment = await _appointmentRepository.GetByIdAsync(appointmentId);
 
@@ -26,8 +28,8 @@ namespace InnoClinic.Appointments.Application.Services
                 Id = Guid.NewGuid(),
                 Complaints = complaints,
                 Conclusion = conclusion,
-                Recomendations = recomendations,
-                Diagnisis = diagnisis,
+                Recommendations = recommendations,
+                Diagnosis = diagnosis,
                 Appointment = appointment,
             };
 
@@ -51,7 +53,7 @@ namespace InnoClinic.Appointments.Application.Services
             return await _appointmentResultRepository.GetAllByAppointmentIdAsync(appointmentId);
         }
 
-        public async Task UpdateAppointmentResultAsync(Guid id, string complaints, string conclusion, string recomendations, string diagnisis, Guid appointmentId)
+        public async Task UpdateAppointmentResultAsync(Guid id, string complaints, string conclusion, string recommendations, string diagnosis, Guid appointmentId)
         {
             var appointment = await _appointmentRepository.GetByIdAsync(appointmentId);
 
@@ -60,8 +62,8 @@ namespace InnoClinic.Appointments.Application.Services
                 Id = id,
                 Complaints = complaints,
                 Conclusion = conclusion,
-                Recomendations = recomendations,
-                Diagnisis = diagnisis,
+                Recommendations = recommendations,
+                Diagnosis = diagnosis,
                 Appointment = appointment,
             };
 

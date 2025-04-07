@@ -13,11 +13,11 @@ namespace InnoClinic.Appointments.Application.Validators
             RuleFor(x => x.Conclusion)
                 .NotEmpty().WithMessage("The conclusion field is required.");
 
-            RuleFor(x => x.Recomendations)
-                .NotEmpty().WithMessage("The recomendations field is required.");
+            RuleFor(x => x.Recommendations)
+                .NotEmpty().WithMessage("The recommendations field is required.");
 
-            RuleFor(x => x.Diagnisis)
-                .NotEmpty().WithMessage("The diagnisis field is required.");
+            RuleFor(x => x.Diagnosis)
+                .NotEmpty().WithMessage("The diagnosis field is required.");
         }
     }
 }

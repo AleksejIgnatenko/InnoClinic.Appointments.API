@@ -67,6 +67,12 @@ namespace InnoClinic.Appointments.API.Controllers
             return Ok(await _appointmentService.GetAllAppointmentsByPatientIdAsync(patientId));
         }
 
+        [HttpGet("is-appointment-results-existence/{id:guid}")]
+        public async Task<ActionResult<bool>> IsAppointmentResultsExistenceAsync(Guid id)
+        {
+            return Ok(await _appointmentService.IsAppointmentResultsExistenceAsync(id));
+        }
+
         //role receptionist
         [HttpPut("{id:guid}")]
         public async Task<ActionResult> UpdateAppointmentAsync(Guid id, [FromBody] AppointmentRequest appointmentRequest)

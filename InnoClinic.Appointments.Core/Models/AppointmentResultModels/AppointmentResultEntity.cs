@@ -7,8 +7,8 @@ namespace InnoClinic.Appointments.Core.Models.AppointmentResultModels
         public Guid Id { get; set; }
         public string Complaints { get; set; } = string.Empty; 
         public string Conclusion { get; set; } = string.Empty; 
-        public string Recomendations { get; set; } = string.Empty;
-        public string Diagnisis { get; set; } = string.Empty;
+        public string Recommendations { get; set; } = string.Empty;
+        public string Diagnosis { get; set; } = string.Empty;
         public AppointmentEntity Appointment { get; set; } = new AppointmentEntity();
     }
 }
