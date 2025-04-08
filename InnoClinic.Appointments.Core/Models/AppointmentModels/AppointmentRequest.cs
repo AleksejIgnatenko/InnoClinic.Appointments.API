@@ -1,9 +1,8 @@
-﻿namespace InnoClinic.Appointments.API.Contracts
+﻿namespace InnoClinic.Appointments.Core.Models.AppointmentModels
 {
     public record AppointmentRequest(
         Guid DoctorId,
         Guid MedicalServiceId,
-        Guid PatientId,
         string Date,
         string Time,
         bool IsApproved
