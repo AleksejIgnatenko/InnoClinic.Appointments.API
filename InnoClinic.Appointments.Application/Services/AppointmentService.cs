@@ -25,6 +25,33 @@ namespace InnoClinic.Appointments.Application.Services
             _appointmentResultRepository = appointmentResultRepository;
         }
 
+        public async Task CreateAppointmentAsync(Guid patientId, Guid doctorId, Guid medicalServiceId, string date, string time, bool isApproved)
+        {
+            var patient = await _patientRepository.GetByIdAsync(patientId);
+            var doctor = await _doctorRepository.GetByIdAsync(doctorId);
+            var medicalService = await _medicalServiceRepository.GetByIdAsync(medicalServiceId);
+
+            var appointment = new AppointmentEntity
+            {
+                Id = Guid.NewGuid(),
+                Patient = patient,
+                Doctor = doctor,
+                MedicalService = medicalService,
+                Date = date,
+                Time = time,
+                IsApproved = isApproved
+            };
+
+            var validationErrors = _validationService.Validation(appointment);
+
+            if (validationErrors.Count != 0)
+            {
+                throw new ValidationException(validationErrors);
+            }
+
+            await _appointmentRepository.CreateAsync(appointment);
+        }
+
         public async Task CreateAppointmentAsync(string token, Guid doctorId, Guid medicalServiceId, string date, string time, bool isApproved)
         {
             var accountId = _jwtTokenService.GetAccountIdFromAccessToken(token);
@@ -82,7 +109,7 @@ namespace InnoClinic.Appointments.Application.Services
             return await _appointmentRepository.GetByAccountIdAndDateAsync(accountId, date);
         }
 
-        public async Task<List<string>> GetAllAvailableTimeSlotsAsync(string date, int timeSlotSize)
+        public async Task<List<string>> GetAllAvailableTimeSlotsAsync(string date, int timeSlotSize, Guid doctorId)
         {
             TimeSpan startWorkingTime = new TimeSpan(8, 0, 0);
             TimeSpan endWorkingTime = new TimeSpan(17, 0, 0);
@@ -90,7 +117,7 @@ namespace InnoClinic.Appointments.Application.Services
             var freeTimes = new List<string>();
             var lastEndTime = startWorkingTime;
 
-            var appointments = await _appointmentRepository.GetByDateAsync(date);
+            var appointments = await _appointmentRepository.GetByDateAndDoctorIdAsync(date, doctorId);
             appointments = appointments.OrderBy(a => DateTime.Parse(a.Time.Split(" - ")[0])).ToList();
 
             foreach (var appointment in appointments)

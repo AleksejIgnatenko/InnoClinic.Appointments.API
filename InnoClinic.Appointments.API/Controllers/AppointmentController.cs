@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace InnoClinic.Appointments.API.Controllers
 {
     [ApiController]
-    //[Authorize]
+    [Authorize]
     [Route("api/[controller]")]
     public class AppointmentController : ControllerBase
     {
@@ -15,6 +15,15 @@ namespace InnoClinic.Appointments.API.Controllers
         public AppointmentController(IAppointmentService appointmentService)
         {
             _appointmentService = appointmentService;
+        }
+
+        [Authorize(Roles = "Receptionist")]
+        [HttpPost("create")]
+        public async Task<ActionResult> CreateReceptionistAppointmentAsync([FromBody] CreateReceptionistAppointmentRequest createReceptionistAppointmentRequest)
+        {
+            await _appointmentService.CreateAppointmentAsync(createReceptionistAppointmentRequest.PatientId, createReceptionistAppointmentRequest.DoctorId, createReceptionistAppointmentRequest.MedicalServiceId, createReceptionistAppointmentRequest.Date, createReceptionistAppointmentRequest.Time, createReceptionistAppointmentRequest.IsApproved);
+
+            return Ok();
         }
 
 
@@ -55,10 +64,11 @@ namespace InnoClinic.Appointments.API.Controllers
             return Ok(await _appointmentService.GetAppointmentsByDoctorAndDateAsync(token, date));
         }
 
+        [AllowAnonymous]
         [HttpGet("all-available-time-slots")]
-        public async Task<ActionResult> GetAllAvailableTimeSlotsAsync(string date, int timeSlotSize)
+        public async Task<ActionResult> GetAllAvailableTimeSlotsAsync(string date, int timeSlotSize, Guid doctorId)
         {
-            return Ok(await _appointmentService.GetAllAvailableTimeSlotsAsync(date, timeSlotSize));
+            return Ok(await _appointmentService.GetAllAvailableTimeSlotsAsync(date, timeSlotSize, doctorId));
         }
 
         [HttpGet("by-patient-id/{patientId:guid}")]
@@ -73,7 +83,7 @@ namespace InnoClinic.Appointments.API.Controllers
             return Ok(await _appointmentService.IsAppointmentResultsExistenceAsync(id));
         }
 
-        //role receptionist
+        [Authorize(Roles = "Receptionist, Patient")]
         [HttpPut("{id:guid}")]
         public async Task<ActionResult> UpdateAppointmentAsync(Guid id, [FromBody] AppointmentRequest appointmentRequest)
         {
@@ -83,6 +93,7 @@ namespace InnoClinic.Appointments.API.Controllers
             return Ok();
         }
 
+        [Authorize(Roles = "Receptionist")]
         [HttpDelete("{id:guid}")]
         public async Task<ActionResult> DeleteAppointmentAsync(Guid id)
         {

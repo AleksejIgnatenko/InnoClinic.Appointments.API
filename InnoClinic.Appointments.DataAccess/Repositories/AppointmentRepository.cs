@@ -25,7 +25,7 @@ namespace InnoClinic.Appointments.DataAccess.Repositories
                 .Include(a => a.Patient)
                 .Include(a => a.Doctor)
                 .Include(a => a.MedicalService)
-                .FirstOrDefaultAsync(a => a.Id == id)
+                .FirstOrDefaultAsync(a => a.Id.Equals(id))
                 ?? throw new DataRepositoryException("Appointment not found", 404);
         }
 
@@ -57,6 +57,16 @@ namespace InnoClinic.Appointments.DataAccess.Repositories
                 .Include(a => a.Patient)
                 .Include(a => a.MedicalService)
                 .Where(a => a.Date.Equals(date))
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<AppointmentEntity>> GetByDateAndDoctorIdAsync(string date, Guid doctorId)
+        {
+            return await _context.Appointments
+                .Include(a => a.Doctor)
+                .Include(a => a.Patient)
+                .Include(a => a.MedicalService)
+                .Where(a => a.Date.Equals(date) && a.Doctor.Id.Equals(doctorId))
                 .ToListAsync();
         }
 

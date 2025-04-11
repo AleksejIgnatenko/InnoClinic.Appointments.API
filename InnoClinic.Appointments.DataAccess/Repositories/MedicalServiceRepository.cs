@@ -16,23 +16,5 @@ namespace InnoClinic.Appointments.DataAccess.Repositories
                 .FirstOrDefaultAsync(m => m.Id.Equals(id))
                 ?? throw new DataRepositoryException($"Service with Id '{id}' not found.", StatusCodes.Status404NotFound); ;
         }
-
-        public override async Task UpdateAsync(MedicalServiceEntity entity)
-        {
-            await _context.MedicalServices
-                .Where(m => m.Id.Equals(entity.Id))
-                .ExecuteUpdateAsync(m => m
-                    .SetProperty(m => m.ServiceName, entity.ServiceName)
-                    .SetProperty(m => m.Price, entity.Price)
-                    .SetProperty(m => m.IsActive, entity.IsActive)
-                );
-        }
-
-        public override async Task DeleteAsync(MedicalServiceEntity entity)
-        {
-            await _context.Patients
-                .Where(d => d.Id.Equals(entity.Id))
-                .ExecuteDeleteAsync();
-        }
     }
 }

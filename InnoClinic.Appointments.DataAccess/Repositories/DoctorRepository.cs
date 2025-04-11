@@ -16,25 +16,5 @@ namespace InnoClinic.Appointments.DataAccess.Repositories
                 .FirstOrDefaultAsync(d => d.Id.Equals(id))
                 ?? throw new DataRepositoryException($"Doctor with Id '{id}' not found.", StatusCodes.Status404NotFound); ;
         }
-
-        public override async Task UpdateAsync(DoctorEntity entity)
-        {
-            await _context.Doctors
-                .Where(d => d.Id.Equals(entity.Id))
-                .ExecuteUpdateAsync(d => d
-                    .SetProperty(d => d.FirstName, entity.FirstName)
-                    .SetProperty(d => d.LastName, entity.LastName)
-                    .SetProperty(d => d.MiddleName, entity.MiddleName)
-                    .SetProperty(d => d.CabinetNumber, entity.CabinetNumber)
-                    .SetProperty(d => d.Status, entity.Status)
-                );
-        }
-
-        public override async Task DeleteAsync(DoctorEntity entity)
-        {
-            await _context.Doctors
-                .Where(d => d.Id.Equals(entity.Id))
-                .ExecuteDeleteAsync();
-        }
     }
 }
