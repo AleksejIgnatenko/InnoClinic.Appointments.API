@@ -1,12 +1,11 @@
-﻿namespace InnoClinic.Appointments.Core.Exceptions
-{
-    public class ValidationException : Exception
-    {
-        public Dictionary<string, string> Errors { get; }
+﻿namespace InnoClinic.Appointments.Core.Exceptions;
 
-        public ValidationException(Dictionary<string, string> errors)
-        {
-            Errors = errors;
-        }
+public class ValidationException : Exception
+{
+    public Dictionary<string, string> Errors { get; }
+
+    public ValidationException(Dictionary<string, string> errors)
+    {
+        Errors = errors;
     }
 }

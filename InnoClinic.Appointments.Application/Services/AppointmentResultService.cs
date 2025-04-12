@@ -9,14 +9,12 @@ namespace InnoClinic.Appointments.Application.Services
         private readonly IAppointmentResultRepository _appointmentResultRepository;
         private readonly IAppointmentRepository _appointmentRepository;
         private readonly IValidationService _validationService;
-        private readonly HttpClient _httpClient;
 
         public AppointmentResultService(IAppointmentResultRepository appointmentResultRepository, IAppointmentRepository appointmentRepository, IValidationService validationService)
         {
             _appointmentResultRepository = appointmentResultRepository;
             _appointmentRepository = appointmentRepository;
             _validationService = validationService;
-            _httpClient = new HttpClient();
         }
 
         public async Task CreateAppointmentResultAsync(string complaints, string conclusion, string recommendations, string diagnosis, Guid appointmentId)
