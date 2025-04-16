@@ -86,11 +86,12 @@ namespace InnoClinic.Appointments.Application.Services
             return await _appointmentRepository.GetAllAsync();
         }
 
-        public async Task<IEnumerable<AppointmentEntity>> GetAppointmentsByDoctorAsync(string token)
+        public async Task<IEnumerable<AppointmentEntity>> GetDoctorAppointmentsByAccessTokenAsync(string token)
         {
             var accountId = _jwtTokenService.GetAccountIdFromAccessToken(token);
             return await _appointmentRepository.GetAllByDoctorAccountIdAsync(accountId);
         }
+
         public async Task<IEnumerable<AppointmentEntity>> GetAppointmentsByDateAsync(string date)
         {
             var appointments = await _appointmentRepository.GetByDateAsync(date);
@@ -103,7 +104,7 @@ namespace InnoClinic.Appointments.Application.Services
             return appointments;
         }
 
-        public async Task<IEnumerable<AppointmentEntity>> GetAppointmentsByDoctorAndDateAsync(string token, string date)
+        public async Task<IEnumerable<AppointmentEntity>> GetDoctorAppointmentsByAccessTokenAndDateAsync(string token, string date)
         {
             var accountId = _jwtTokenService.GetAccountIdFromAccessToken(token);
             return await _appointmentRepository.GetByAccountIdAndDateAsync(accountId, date);

@@ -2,9 +2,11 @@
 using InnoClinic.Appointments.Core.Models.AppointmentResultModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics.CodeAnalysis;
 
 namespace InnoClinic.Appointments.API.Controllers
 {
+    [ExcludeFromCodeCoverage]
     [ApiController]
     [Authorize]
     [Route("api/[controller]")]

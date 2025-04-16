@@ -12,22 +12,24 @@ namespace InnoClinic.Appointments.TestSuiteNUnit.ServiceTests;
 
 class AppointmentServiceTests
 {
-    private readonly Mock<IAppointmentRepository> _appointmentRepositoryMock;
-    private readonly Mock<IPatientRepository> _patientRepositoryMock;
-    private readonly Mock<IDoctorRepository> _doctorRepositoryMock;
-    private readonly Mock<IMedicalServiceRepository> _medicalServiceRepositoryMock;
-    private readonly Mock<IValidationService> _validationServiceMock;
-    private readonly Mock<IJwtTokenService> _jwtTokenServiceMock;
-    private readonly Mock<IAppointmentResultRepository> _appointmentResultRepositoryMock;
+    private Mock<IAppointmentRepository> _appointmentRepositoryMock;
+    private Mock<IPatientRepository> _patientRepositoryMock;
+    private Mock<IDoctorRepository> _doctorRepositoryMock;
+    private Mock<IMedicalServiceRepository> _medicalServiceRepositoryMock;
+    private Mock<IValidationService> _validationServiceMock;
+    private Mock<IJwtTokenService> _jwtTokenServiceMock;
+    private Mock<IAppointmentResultRepository> _appointmentResultRepositoryMock;
 
-    private readonly AppointmentService _appointmentService;
+    private AppointmentService _appointmentService;
 
     private AppointmentEntity appointment;
     private PatientEntity patient;
     private DoctorEntity doctor;
     private MedicalServiceEntity medicalService;
+    private string jwtToken;
 
-    public AppointmentServiceTests()
+    [SetUp]
+    public void SetUp()
     {
         patient = new PatientEntity
         {
@@ -67,6 +69,8 @@ class AppointmentServiceTests
             Time = "08:00 - 08:10",
             IsApproved = true,
         };
+
+        jwtToken = "jwtToken";
 
         _appointmentRepositoryMock = new Mock<IAppointmentRepository>();
         _patientRepositoryMock = new Mock<IPatientRepository>();
@@ -139,6 +143,59 @@ class AppointmentServiceTests
     }
 
     [Test]
+    public async Task CreateAppointmentAsync_WithJwtTokenValidInput_ShouldCreateAppointment()
+    {
+        // Arrange
+        _jwtTokenServiceMock.Setup(service => service.GetAccountIdFromAccessToken(jwtToken)).Returns(patient.AccountId);
+        _patientRepositoryMock.Setup(repo => repo.GetByAccountIdAsync(patient.AccountId)).ReturnsAsync(patient);
+        _doctorRepositoryMock.Setup(repo => repo.GetByIdAsync(doctor.Id)).ReturnsAsync(doctor);
+        _medicalServiceRepositoryMock.Setup(repo => repo.GetByIdAsync(medicalService.Id)).ReturnsAsync(medicalService);
+
+        _validationServiceMock.Setup(service => service.Validation(It.IsAny<AppointmentEntity>())).Returns(new Dictionary<string, string>());
+
+        // Act
+        await _appointmentService.CreateAppointmentAsync(jwtToken, doctor.Id, medicalService.Id, appointment.Date, appointment.Time, appointment.IsApproved);
+
+        // Assert
+        _appointmentRepositoryMock.Verify(repo => repo.CreateAsync(It.Is<AppointmentEntity>(appointmentEntity =>
+            appointmentEntity.Patient == patient &&
+            appointmentEntity.Doctor == doctor &&
+            appointmentEntity.MedicalService == medicalService &&
+            appointmentEntity.Date == appointment.Date &&
+            appointmentEntity.Time == appointment.Time &&
+            appointmentEntity.IsApproved == appointment.IsApproved)), Times.Once);
+    }
+
+    [Test]
+    public void CreateAppointmentAsync_WithJwtTokenValidationErrors_ShouldThrowValidationException()
+    {
+        // Arrange
+        var validationErrors = new Dictionary<string, string>
+        {
+            { "Date", "Date must be in the format yyyy-MM-dd." }
+        };
+
+        _jwtTokenServiceMock.Setup(service => service.GetAccountIdFromAccessToken(jwtToken)).Returns(patient.AccountId);
+        _patientRepositoryMock.Setup(repo => repo.GetByAccountIdAsync(patient.AccountId)).ReturnsAsync(patient);
+        _doctorRepositoryMock.Setup(repo => repo.GetByIdAsync(doctor.Id)).ReturnsAsync(doctor);
+        _medicalServiceRepositoryMock.Setup(repo => repo.GetByIdAsync(medicalService.Id)).ReturnsAsync(medicalService);
+
+        _validationServiceMock.Setup(service => service.Validation(It.IsAny<AppointmentEntity>())).Returns(validationErrors);
+
+        // Act and Assert
+        ValidationException exception = Assert.ThrowsAsync<ValidationException>(async () =>
+            await _appointmentService.CreateAppointmentAsync(patient.Id, doctor.Id, medicalService.Id, "", appointment.Time, appointment.IsApproved));
+
+        Assert.NotNull(exception);
+        Assert.AreEqual(validationErrors, exception.Errors);
+
+        _patientRepositoryMock.Verify(repo => repo.GetByIdAsync(patient.Id), Times.Once);
+        _doctorRepositoryMock.Verify(repo => repo.GetByIdAsync(doctor.Id), Times.Once);
+        _medicalServiceRepositoryMock.Verify(repo => repo.GetByIdAsync(medicalService.Id), Times.Once);
+        _appointmentResultRepositoryMock.Verify(repo => repo.CreateAsync(It.IsAny<AppointmentResultEntity>()), Times.Never);
+    }
+
+    [Test]
     public async Task GetAllAppointmentsAsync_ShouldReturnAllAppointments()
     {
         // Arrange
@@ -161,6 +218,30 @@ class AppointmentServiceTests
     }
 
     [Test]
+    public async Task GetDoctorAppointmentsByAccessTokenAsync_ShouldReturnAllAppointmentsByDoctor()
+    {
+        // Arrange
+        var appointments = new List<AppointmentEntity>
+        {
+            new AppointmentEntity { Id = Guid.NewGuid(), Date = "2023-10-01", Time = "10:00" },
+            new AppointmentEntity { Id = Guid.NewGuid(), Date = "2023-10-02", Time = "11:00" }
+        };
+
+        _jwtTokenServiceMock.Setup(service => service.GetAccountIdFromAccessToken(jwtToken)).Returns(doctor.AccountId);
+        _appointmentRepositoryMock.Setup(repo => repo.GetAllByDoctorAccountIdAsync(doctor.AccountId)).ReturnsAsync(appointments);
+
+        // Act
+        var results = await _appointmentService.GetDoctorAppointmentsByAccessTokenAsync(jwtToken);
+
+        // Assert
+        Assert.NotNull(results);
+        Assert.AreEqual(appointments.Count, results.Count());
+
+        _jwtTokenServiceMock.Verify(service => service.GetAccountIdFromAccessToken(jwtToken), Times.Once);
+        _appointmentRepositoryMock.Verify(repo => repo.GetAllByDoctorAccountIdAsync(doctor.AccountId), Times.Once);
+    }
+
+    [Test]
     public async Task GetAppointmentsByDateAsync_ShouldReturnAllAppointmentsByDate()
     {
         // Arrange
@@ -180,6 +261,31 @@ class AppointmentServiceTests
         Assert.AreEqual(appointments.Count, results.Count());
 
         _appointmentRepositoryMock.Verify(repo => repo.GetByDateAsync(date), Times.Once);
+    }
+
+    [Test]
+    public async Task GetDoctorAppointmentsByAccessTokenAndDateAsync_ShouldReturnAllAppointmentsByDoctorAndDate()
+    {
+        // Arrange
+        var date = "2023-10-01";
+        var appointments = new List<AppointmentEntity>
+        {
+            new AppointmentEntity { Id = Guid.NewGuid(), Date = "2023-10-01", Time = "10:00" },
+            new AppointmentEntity { Id = Guid.NewGuid(), Date = "2023-10-01", Time = "11:00" }
+        };
+
+        _jwtTokenServiceMock.Setup(service => service.GetAccountIdFromAccessToken(jwtToken)).Returns(doctor.AccountId);
+        _appointmentRepositoryMock.Setup(repo => repo.GetByAccountIdAndDateAsync(doctor.AccountId, date)).ReturnsAsync(appointments);
+
+        // Act
+        var results = await _appointmentService.GetDoctorAppointmentsByAccessTokenAndDateAsync(jwtToken, date);
+
+        // Assert
+        Assert.NotNull(results);
+        Assert.AreEqual(appointments.Count, results.Count());
+
+        _jwtTokenServiceMock.Verify(service => service.GetAccountIdFromAccessToken(jwtToken), Times.Once);
+        _appointmentRepositoryMock.Verify(repo => repo.GetByAccountIdAndDateAsync(doctor.AccountId, date), Times.Once);
     }
 
     [Test]
@@ -244,7 +350,7 @@ class AppointmentServiceTests
     }
 
     [Test]
-    public async Task ГзвфеуAppointmentAsync_ValidInput_ShouldCreateAppointment()
+    public async Task UpdateAppointmentAsync_ValidInput_ShouldCreateAppointment()
     {
         // Arrange
         _appointmentRepositoryMock.Setup(repo => repo.GetByIdAsync(appointment.Id)).ReturnsAsync(appointment);

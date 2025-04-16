@@ -16,11 +16,12 @@ public class AppointmentResultServiceTests
     private Mock<IAppointmentRepository> _appointmentRepositoryMock;
     private Mock<IValidationService> _validationServiceMock;
 
-    private readonly AppointmentResultService _appointmentResultService;
+    private AppointmentResultService _appointmentResultService;
     private AppointmentEntity appointment;
     private AppointmentResultEntity appointmentResult;
 
-    public AppointmentResultServiceTests()
+    [SetUp]
+    public void SetUp()
     {
         appointment = new AppointmentEntity
         {
@@ -40,7 +41,7 @@ public class AppointmentResultServiceTests
             Conclusion = "Conclusion",
             Recommendations = "Recommendations",
             Diagnosis = "Diagnosis",
-            Appointment = new AppointmentEntity(),
+            Appointment = appointment,
         };
 
         _appointmentResultRepositoryMock = new Mock<IAppointmentResultRepository>();
@@ -157,7 +158,7 @@ public class AppointmentResultServiceTests
         _appointmentResultRepositoryMock.Setup(repo => repo.UpdateAsync(It.IsAny<AppointmentResultEntity>())).Returns(Task.CompletedTask);
 
         // Act and Assert
-        Assert.DoesNotThrowAsync(async () => await _appointmentResultService.UpdateAppointmentResultAsync(Guid.NewGuid(), "Complaints", "Conclusion", "Recommendations", "Diagnosis", Guid.NewGuid()));
+        Assert.DoesNotThrowAsync(async () => await _appointmentResultService.UpdateAppointmentResultAsync(appointmentResult.Id, "Complaints", "Conclusion", "Recommendations", "Diagnosis", appointment.Id));
 
         _appointmentRepositoryMock.Verify(repo => repo.GetByIdAsync(appointment.Id), Times.Once);
         _appointmentResultRepositoryMock.Verify(repo => repo.UpdateAsync(It.IsAny<AppointmentResultEntity>()), Times.Once);
@@ -181,7 +182,7 @@ public class AppointmentResultServiceTests
 
         // Act and Assert
         ValidationException exception = Assert.ThrowsAsync<ValidationException>(async () =>
-            await _appointmentResultService.UpdateAppointmentResultAsync(Guid.NewGuid(), "", "", "", "", appointment.Id));
+            await _appointmentResultService.UpdateAppointmentResultAsync(appointmentResult.Id, "", "", "", "", appointment.Id));
 
         Assert.NotNull(exception);
         Assert.AreEqual(validationErrors, exception.Errors);

@@ -17,7 +17,8 @@ class AppointmentResultRepositoryTests
     private AppointmentResultEntity appointmentResult;
     private AppointmentResultEntity appointmentResult1;
 
-    public AppointmentResultRepositoryTests()
+    [SetUp]
+    public async Task SetUp()
     {
         appointmentResult = new AppointmentResultEntity
         {
@@ -38,11 +39,7 @@ class AppointmentResultRepositoryTests
             Diagnosis = "Diagnosis1",
             Appointment = new AppointmentEntity(),
         };
-    }
 
-    [SetUp]
-    public async Task SetUp()
-    {
         _dbContainer = new PostgreSqlBuilder()
             .WithImage("postgres:latest")
             .WithDatabase("TestDatabase")

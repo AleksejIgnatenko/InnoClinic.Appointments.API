@@ -19,7 +19,8 @@ class AppointmentRepositoryTests
     private AppointmentEntity appointment;
     private AppointmentEntity appointment1;
 
-    public AppointmentRepositoryTests()
+    [SetUp]
+    public async Task SetUp()
     {
         appointment = new AppointmentEntity
         {
@@ -42,11 +43,7 @@ class AppointmentRepositoryTests
             Time = "09:00 - 09:10",
             IsApproved = false,
         };
-    }
 
-    [OneTimeSetUp]
-    public async Task OneTimeSetUp()
-    {
         _dbContainer = new PostgreSqlBuilder()
             .WithImage("postgres:latest")
             .WithDatabase("TestDatabase")
@@ -66,8 +63,8 @@ class AppointmentRepositoryTests
         _repository = new AppointmentRepository(_context);
     }
 
-    [OneTimeTearDown]
-    public async Task OneTimeTearDown()
+    [TearDown]
+    public async Task TearDown()
     {
         await _context.Database.EnsureDeletedAsync();
         await _context.DisposeAsync();

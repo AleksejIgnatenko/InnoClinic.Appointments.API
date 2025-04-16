@@ -15,7 +15,8 @@ class DoctorRepositoryTests
 
     private DoctorEntity doctor;
 
-    public DoctorRepositoryTests()
+    [SetUp]
+    public async Task SetUp()
     {
         doctor = new DoctorEntity
         {
@@ -27,11 +28,7 @@ class DoctorRepositoryTests
             CabinetNumber = 1,
             Status = "Status",
         };
-    }
 
-    [SetUp]
-    public async Task SetUp()
-    {
         _dbContainer = new PostgreSqlBuilder()
             .WithImage("postgres:latest")
             .WithDatabase("TestDatabase")

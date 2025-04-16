@@ -2,9 +2,11 @@
 using InnoClinic.Appointments.Core.Models.AppointmentModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics.CodeAnalysis;
 
 namespace InnoClinic.Appointments.API.Controllers
 {
+    [ExcludeFromCodeCoverage]
     [ApiController]
     [Authorize]
     [Route("api/[controller]")]
@@ -47,7 +49,7 @@ namespace InnoClinic.Appointments.API.Controllers
         public async Task<ActionResult> GetAppointmentsByDoctorAsync()
         {
             var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-            return Ok(await _appointmentService.GetAppointmentsByDoctorAsync(token));
+            return Ok(await _appointmentService.GetDoctorAppointmentsByAccessTokenAsync(token));
         }
 
         [HttpGet("appointments-by-date")]
@@ -61,7 +63,7 @@ namespace InnoClinic.Appointments.API.Controllers
         {
             var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
 
-            return Ok(await _appointmentService.GetAppointmentsByDoctorAndDateAsync(token, date));
+            return Ok(await _appointmentService.GetDoctorAppointmentsByAccessTokenAndDateAsync(token, date));
         }
 
         [AllowAnonymous]

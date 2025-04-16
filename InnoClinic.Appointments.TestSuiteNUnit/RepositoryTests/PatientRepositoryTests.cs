@@ -14,7 +14,8 @@ class PatientRepositoryTests
 
     private PatientEntity patient;
 
-    public PatientRepositoryTests()
+    [SetUp]
+    public async Task SetUp()
     {
         patient = new PatientEntity
         {
@@ -24,11 +25,7 @@ class PatientRepositoryTests
             MiddleName = "A",
             AccountId = Guid.NewGuid()
         };
-    }
 
-    [SetUp]
-    public async Task SetUp()
-    {
         _dbContainer = new PostgreSqlBuilder()
             .WithImage("postgres:latest")
             .WithDatabase("TestDatabase")

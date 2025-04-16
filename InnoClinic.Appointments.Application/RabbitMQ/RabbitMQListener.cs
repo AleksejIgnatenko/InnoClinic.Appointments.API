@@ -4,7 +4,6 @@ using InnoClinic.Appointments.Application.Services;
 using InnoClinic.Appointments.Core.Models.DoctorModels;
 using InnoClinic.Appointments.Core.Models.MedicalServiceModels;
 using InnoClinic.Appointments.Core.Models.PatientModels;
-using InnoClinic.Appointments.DataAccess.Repositories;
 using InnoClinic.Appointments.Infrastructure.RabbitMQ;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;

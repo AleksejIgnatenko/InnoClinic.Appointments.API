@@ -1,5 +1,4 @@
-﻿using System.Threading.Channels;
-using InnoClinic.Appointments.Core.Models.PatientModels;
+﻿using InnoClinic.Appointments.Core.Models.PatientModels;
 using InnoClinic.Appointments.DataAccess.Repositories;
 
 namespace InnoClinic.Appointments.Application.Services;

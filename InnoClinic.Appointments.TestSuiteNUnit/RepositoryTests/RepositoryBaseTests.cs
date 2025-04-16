@@ -17,7 +17,8 @@ class RepositoryBaseTests
 
     private AppointmentEntity appointment;
 
-    public RepositoryBaseTests()
+    [SetUp]
+    public async Task SetUp()
     {
         appointment = new AppointmentEntity
         {
@@ -29,11 +30,7 @@ class RepositoryBaseTests
             Time = "08:00 - 08:10",
             IsApproved = false,
         };
-    }
 
-    [SetUp]
-    public async Task SetUp()
-    {
         _dbContainer = new PostgreSqlBuilder()
             .WithImage("postgres:latest")
             .WithDatabase("TestDatabase")

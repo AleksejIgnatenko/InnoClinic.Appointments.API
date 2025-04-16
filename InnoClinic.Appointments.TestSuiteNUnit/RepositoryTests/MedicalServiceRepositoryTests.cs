@@ -16,7 +16,8 @@ class MedicalServiceRepositoryTests
 
     private MedicalServiceEntity medicalService;
 
-    public MedicalServiceRepositoryTests()
+    [SetUp]
+    public async Task SetUp()
     {
         medicalService = new MedicalServiceEntity
         {
@@ -25,11 +26,7 @@ class MedicalServiceRepositoryTests
             Price = 0,
             IsActive = true,
         };
-    }
 
-    [SetUp]
-    public async Task SetUp()
-    {
         _dbContainer = new PostgreSqlBuilder()
             .WithImage("postgres:latest")
             .WithDatabase("TestDatabase")
