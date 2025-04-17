@@ -1,4 +1,6 @@
-﻿using InnoClinic.Appointments.Application.Validators;
+﻿using FluentValidation;
+using FluentValidation.Results;
+using InnoClinic.Appointments.Application.Validators;
 using InnoClinic.Appointments.Core.Models.AppointmentModels;
 using InnoClinic.Appointments.Core.Models.AppointmentResultModels;
 
@@ -6,38 +8,30 @@ namespace InnoClinic.Appointments.Application.Services
 {
     public class ValidationService : IValidationService
     {
-        public Dictionary<string, string> Validation(AppointmentEntity appointmentModel)
+        public List<ValidationFailure> Validation(AppointmentEntity entity)
         {
-            Dictionary<string, string> errors = new Dictionary<string, string>();
-
-            AppointmentValidator validations = new AppointmentValidator();
-            FluentValidation.Results.ValidationResult validationResult = validations.Validate(appointmentModel);
-            if (!validationResult.IsValid)
-            {
-                foreach (var failure in validationResult.Errors)
-                {
-                    errors[failure.PropertyName] = failure.ErrorMessage;
-                }
-            }
-
-            return errors;
+            var validator = new AppointmentValidator();
+            return Validate(entity, validator);
         }
 
-        public Dictionary<string, string> Validation(AppointmentResultEntity appointmentResultModel)
+        public List<ValidationFailure> Validation(AppointmentResultEntity entity)
         {
-            Dictionary<string, string> errors = new Dictionary<string, string>();
-
-            AppointmentResultValidator validations = new AppointmentResultValidator();
-            FluentValidation.Results.ValidationResult validationResult = validations.Validate(appointmentResultModel);
+            var validator = new AppointmentResultValidator();
+            return Validate(entity, validator);
+        }
+        private List<ValidationFailure> Validate<T>(T model, IValidator<T> validator)
+        {
+            var validationFailures = new List<ValidationFailure>();
+            ValidationResult validationResult = validator.Validate(model);
             if (!validationResult.IsValid)
             {
                 foreach (var failure in validationResult.Errors)
                 {
-                    errors[failure.PropertyName] = failure.ErrorMessage;
+                    validationFailures.Add(new ValidationFailure(failure.PropertyName, failure.ErrorMessage));
                 }
             }
 
-            return errors;
+            return validationFailures;
         }
     }
 }

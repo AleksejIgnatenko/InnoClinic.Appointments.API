@@ -1,4 +1,5 @@
-﻿using InnoClinic.Appointments.Core.Exceptions;
+﻿using FluentValidation;
+using InnoClinic.Appointments.Core.Exceptions;
 using InnoClinic.Appointments.Core.Models.AppointmentModels;
 using InnoClinic.Appointments.DataAccess.Repositories;
 

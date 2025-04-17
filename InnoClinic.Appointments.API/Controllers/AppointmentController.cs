@@ -28,7 +28,6 @@ namespace InnoClinic.Appointments.API.Controllers
             return Ok();
         }
 
-
         [HttpPost]
         public async Task<ActionResult> CreateAppointmentAsync([FromBody] AppointmentRequest appointmentRequest)
         {
